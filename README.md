@@ -1,25 +1,30 @@
 # FoodShare Server Database
 ## Requirements
-This server requires python version 3.x.x
-```
-$ sudo apt-get install python3
-```
-If necessary, pip3 can be installed by
-```
-$ sudo apt-get install python3-pip
-```
-It also depends on a library sql_alchemy
+The server requires python version 2.7 with python-pip installed
+To install the sql_alchemy library necessary for the server do
 ```
 $ pip3 install sqlalchemy
 ```
+To install the pika library necessary for RabbitMQ for client and server do
+```
+$ pip3 install pika
+``` 
 ## Execution
-Initialize the table by executing declare
+Create a local database for the server by executing create_database
 ```
-$ python3 declare.py
+$ python create_database.py
 ```
-Test functionality by executing test
+Test the functionality by adding some users, an offer, two reservations, and two ratings
 ```
-$ python3 test.py
+$ python test.py
+```
+Start consuming a queue that handles registration of users 
+```
+$ python register.py
+```
+Now, when in the client directory, you can try to add a username to the database by executing the same command
+```
+$ python register.py
 ```
 
 
