@@ -1,13 +1,12 @@
 # FoodShare Server Database
 ## Requirements
-The server requires python version 2.7 with python-pip installed
-To install the sql_alchemy library necessary for the server do
+The server requires python version 2.7 with python-pip installed. To install the sql_alchemy library necessary for the server do
 ```
-$ pip3 install sqlalchemy
+$ pip install sqlalchemy
 ```
 To install the pika library necessary for RabbitMQ for client and server do
 ```
-$ pip3 install pika
+$ pip install pika
 ``` 
 ## Server
 Create a local database for the server by executing create_database
