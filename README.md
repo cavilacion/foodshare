@@ -26,7 +26,7 @@ Now, when in the client directory, you can try to add a username to the database
 ```
 $ python register.py
 ```
-Todo: write consumer functions for a queue that contains offerings and reservation requests
+Todo: write consumer functions for queues that contain offerings or reservation requests
 
 
 
