@@ -1,7 +1,7 @@
 import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from declare import Base, User, Offer, Reservation, Rating
+from classes import Base, User, Offer, Reservation, Rating
 
 engine = create_engine('sqlite:///foodshare.db')
 
@@ -58,11 +58,11 @@ print (offering.host.username+" offered "+str(offering.portions)+" portions EUR 
 # list all reservations
 allReservations = session.query(Reservation).all()
 for reserv in allReservations:
-	print(reserv.user.username + " has reserved", reserv.portions,"portions from " + reserv.offer.host.username +"s offering" )
+	print(reserv.user.username + " has reserved "+str( reserv.portions)+" portions from " + reserv.offer.host.username +"s offering" )
 
 # check sems ratings
 for rating in u1.rateds:
-	print(u1.username,"was rated",rating.stars,"stars by",rating.user.username+ " saying \""+rating.comment+"\"")
+	print(u1.username+" was rated "+str(rating.stars)+" stars by "+rating.user.username+ " saying \""+rating.comment+"\"")
 
 # todo: write functions that can add users, offers, reservations, ratings
 # 			to the database, with constraint checking
