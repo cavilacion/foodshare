@@ -38,6 +38,12 @@ class Offer(Base):
 	# many reservations made for this offering 
 	reservations = relationship("Reservation", backref="offer")
 
+	# def to_dict(self):
+	#     return dict(
+	# 		id = self.id,
+	# 		host_id = 
+	# 	)
+
 
 class Reservation(Base):
 	__tablename__ = 'reservation'
