@@ -1,7 +1,7 @@
 import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from classes import Base, User, Offer, Reservation, Rating
+from models.classes import Base, User, Offer, Reservation, Rating
 
 engine = create_engine('sqlite:///foodshare.db')
 

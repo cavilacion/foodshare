@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.exc import IntegrityError
 
-# from classes import Base, User, Offer, Reservation, Rating
+from models.base import Base
 
 __all__ = ['create_engine_and_session']
 # # setup database connection
@@ -49,6 +49,8 @@ __all__ = ['create_engine_and_session']
 
 def create_engine_and_session(app):
     app.engine = create_engine('sqlite:///foodshare.db') 
+    Base.metadata.create_all(app.engine)
+
     app.session = scoped_session(sessionmaker(  autocommit=False,
                                                 autoflush=True,
                                                 bind=app.engine))

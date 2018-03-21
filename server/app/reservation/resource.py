@@ -1,6 +1,6 @@
 from flask_restful import Resource, abort
 from app import ecv
-from models.classes import Reservation
+from models.reservation import Reservation
 
 class ReservationListResource(Resource):
 

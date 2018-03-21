@@ -1,6 +1,6 @@
 from flask_restful import Resource, abort
 from app import ecv
-from models.classes import Offer
+from models.offer import Offer
 
 class OfferListResource(Resource):
 

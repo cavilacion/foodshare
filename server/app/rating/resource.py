@@ -1,6 +1,6 @@
 from flask_restful import Resource, abort
 from app import ecv
-from models.classes import Rating
+from models.rating import Rating
 
 class RatingListResource(Resource):
 
