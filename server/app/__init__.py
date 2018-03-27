@@ -2,7 +2,6 @@ from flask import Flask
 from flask_restful import Api
 from app.database import create_engine_and_session
 
-
 from app import config
 
 ecv = Flask(__name__)
@@ -21,6 +20,7 @@ api.add_resource(ReservationListResource, '/api/reservation')
 api.add_resource(ReservationResource, '/api/reservation/<reservation_id>')
 
 create_engine_and_session(ecv)
+
 
 # @ecv.route("/")
 # def hello():
