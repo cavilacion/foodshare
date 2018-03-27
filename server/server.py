@@ -1,9 +1,9 @@
-from sockets.networksocket import NetworkSocketServer
+from sockets.socket_server import SocketServer
 import pickle
 import threading
 from app import ecv
 
-ns = NetworkSocketServer(5555)
+ns = SocketServer(5555)
 
 
 # Start listening on socket

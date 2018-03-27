@@ -1,4 +1,4 @@
-from server.sockets.networksocket import NetworkSocketClient
+from server.sockets.socket_client import SocketClient
 from server.sockets.locations import locations
 from server.sockets.message import Message, MessageType
 import datetime
@@ -8,7 +8,7 @@ import datetime
 
 import pickle
 
-ns = NetworkSocketClient(locations['groningen'], 5555)
+ns = SocketClient(locations['groningen'], 5555)
 # hours = 6
 # u1 = User(username='Sem')
 
@@ -18,7 +18,12 @@ ns = NetworkSocketClient(locations['groningen'], 5555)
 
 # data = pickle.dumps(o1)
 
-m1 = Message(MessageType.SEARCH, "")
+# m1 = Message(MessageType.GET_OFFERS, None)
+
+m1 = {
+    'type': MessageType.GET_OFFERS.value,
+    'data': None
+}
 
 serialized = pickle.dumps(m1)
 print(serialized)
