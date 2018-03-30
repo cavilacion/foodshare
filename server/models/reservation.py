@@ -24,6 +24,7 @@ class Reservation(Base):
 	    return dict(
 			id = self.id,
 			offer_id = self.offer_id,
+			user_id = self.user_id,
 			portions = self.portions,
 			timestamp = str(self.timestamp)
 		)

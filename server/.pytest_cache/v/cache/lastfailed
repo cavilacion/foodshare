@@ -1,0 +1,5 @@
+{
+  "tests/test_offer.py::TestOfferAPI::()::test_create_offer_wrong_data": true,
+  "tests/test_offer.py::TestOfferAPI::()::test_post_offer": true,
+  "tests/test_sample.py::TestClass::()::test_two": true
+}
