@@ -36,29 +36,27 @@ def add_user(username):
 		return False
 
 def add_offer(offer):
-	host_username = offer["host"]
-	portions = int(offer["portions"])
-	price = float(offer["price"])
+	host_id = offer["host_id"]
+	portions = offer["portions"]
+	price = offer["price"]
 	info = offer["info"]
 	time_ready = offer["time_ready"]
 	time_ready = datetime.strptime(time_ready, '%Y-%m-%d %H:%M:%S.%f')
-	time_created = offer["time_created"]
-	time_created = datetime.strptime(time_created, '%Y-%m-%d %H:%M:%S.%f')
-	# check some constraints ???
   
 	session=DBSession()
-	user=session.query(User).filter(User.username==host_username).first()
-	o = Offer(host_id=user.id, portions=portions, price=price, info=info, time_ready=time_ready,
-									time_created=time_created)
+	user=session.query(User).filter(User.id==host_id).first()
+	if not user:
+		return "User does not exist"
+	o = Offer(host=user, portions=portions, price=price, info=info, time_ready=time_ready)
 	session.add(o)
 	try:
 		session.commit()
-		print (" > "+host_username+" offered a meal with "+str(portions)+" for EUR "
+		print (" > "+user.username+" offered a meal with "+str(portions)+" for EUR "
              +str(price)+" per portion. It will be ready at "+str(time_ready)+". \""+info+"\"")
-		return True
+		return "SUCCESS"
 	except IntegrityError:
-		print (" > Failed to add offer made by "+host_username)
-		return False
+		print (" > Failed to add offer made by "+user.username)
+		return "FAILURE"
 
 def message_handle(ch, method, props, body):
 	print (body)
@@ -70,14 +68,10 @@ def message_handle(ch, method, props, body):
 	elif action == "offer":
 		result = add_offer(msg)
 	else:
-		result = False
-	if result:
-		response="SUCCESS"
-	else:
-		response="FAILURE"
+		result = "FAILURE"
 	ch.basic_publish(exchange='', routing_key=props.reply_to,
 		properties=pika.BasicProperties(correlation_id = props.correlation_id),
-		body=response)
+		body=result)
     
 channel.basic_qos(prefetch_count=1)
 channel.basic_consume (message_handle, queue='foodshare', no_ack=True)

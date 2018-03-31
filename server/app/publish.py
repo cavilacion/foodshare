@@ -5,6 +5,9 @@ import json
 import uuid
 import datetime
 
+from app import ecv
+from app.general_responses import *
+
 class Publisher:
 	def __init__(self):
 		self.username=""
@@ -40,8 +43,7 @@ class Publisher:
 								   body=self.json_msg)
 		while self.response is None:
 			self.connection.process_data_events()
-
-		return self.response=="SUCCESS"
+		return self.response==b'SUCCESS'
 
 	def register (self):
 		# prepare json message
@@ -49,19 +51,18 @@ class Publisher:
 		# post message to queue
 		return self.publish()
 
-	def offer (self, portions, price, info, time_ready, time_created):
+	def offer (self, host_id, portions, price, info, time_ready):
 		# prepare json message
 		offer = {u'action': u'offer',
-				 u'host': self.username,
-				 u'portions': str(portions),
-				 u'price': str(price),
+				 u'host_id': host_id,
+				 u'portions': portions,
+				 u'price': price,
 				 u'info': info,
-				 u'time_ready': str(time_ready),
-				 u'time_created': str(time_created)}
+				 u'time_ready': time_ready}
 		self.json_msg=json.dumps(offer)
 
 		# post message to queue
-		return self.publish()
+		return (offer if self.publish() else False)
 
 	def __del__(self):
 		self.connection.close()
