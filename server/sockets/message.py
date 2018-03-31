@@ -1,5 +1,4 @@
 from enum import Enum, auto
-import jsonpickle
 
 class MessageType(Enum):
     SEARCH = auto()
