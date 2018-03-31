@@ -1,11 +1,13 @@
 import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from models.base import Base
 from models.user import User
 from models.offer import Offer
 from models.reservation import Reservation
 from models.rating import Rating
+
 
 # import session object
 from app import ecv
@@ -35,7 +37,6 @@ rat1 = Rating(user=u2, host=u1, stars=2, comment="I liked the sauce, but the com
 rat2 = Rating(user=u3, host=u1, stars=5, comment="had a good time =) his dad is a fun guy")
 ecv.session.add(rat1)
 ecv.session.add(rat2)
-ecv.session
 # commit changes
 ecv.session.commit()
 
