@@ -5,6 +5,7 @@ import datetime
 from models.offer import Offer
 from models.user import User
 from app.general_responses import *
+from app.publish import Publisher
 
 class OfferListResource(Resource):
 
@@ -13,6 +14,8 @@ class OfferListResource(Resource):
 
     def post(self):
         data = check_request_json(request)
+
+        Publisher p()
 
         # Check and get host
         host_id = data.get('host_id')
