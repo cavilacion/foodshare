@@ -23,7 +23,8 @@ message = dict(
 
 while True:
     # print("while loop")
-    print(client.send_message(pickle.dumps(message)))
+    response = pickle.loads(client.send_message(pickle.dumps(message)))
+    print(response)
     time.sleep(1)
 
 t.join()

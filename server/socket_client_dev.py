@@ -1,6 +1,7 @@
 
 from sockets.socket_server import SocketServer
 from sockets.socket_client import SocketClient
+from sockets.synchronizer import Synchronizer
 import threading
 import time
 import pickle
@@ -12,6 +13,9 @@ t.daemon = True
 t.start()
 
 client = SocketClient('127.0.0.1', 5555)
+
+# sync = Synchronizer(server, [client])
+
 client.connect()
 print("client created..")
 
@@ -23,7 +27,9 @@ message = dict(
 
 while True:
     # print("while loop")
-    print(client.send_message(pickle.dumps(message)))
+    response = pickle.loads(client.send_message(pickle.dumps(message)))
+    
+    print(response)
     time.sleep(1)
 
 t.join()

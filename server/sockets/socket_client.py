@@ -42,7 +42,7 @@ class SocketClient:
             self.socket.sendall(message)
 
             data = self.socket.recv(2048)
-            self.response_queue.put(pickle.loads(data))
+            self.response_queue.put(data)
 
             self.send_queue.task_done()
     
