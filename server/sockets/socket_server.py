@@ -50,45 +50,50 @@ class SocketServer:
             data = conn.recv(4096)
             if not data:
                 break # Empty string means the client disconnected..
-            # print(data)
-            #conn.sendall(str.encode(reply))
             message = pickle.loads(data)
-            # self.handle_request(message)
-            # print(message)
             self.handle_request(conn, addr, message)
-            # conn.sendall(str.encode("lalalala"))
 
         conn.close()
         del self.clients[addr[0]]
 
     def handle_request(self, conn, addr, message):
-        if not message['type']:
-            return
-        print("Client sent message:", message['type'], message['class_type'], str(message['id']))
-        class_type = message['class_type']
-        id = message['id']
+        # if not message['type']:
+        #     return
+        # message_obj = pickle.loads(message)
+        print("Client sent message:", message.type, message.class_type, str(message.obj_id))
         
-        if message['type'] == "CHECK_ID":
-            self.check_id_handler(conn, class_type, id)
+        if message.type == MessageType.CHECK_ID:
+            out_message = self.check_id_free(message)
+            conn.sendall(pickle.dumps(out_message))
+        elif message.type == MessageType.HAVE_CREATED:
+            self.handle_created(message)
+            conn.sendall(pickle.dumps(dict()))
+
+            # out_message = Message(MessageType.FETCH_OBJ, message.class_type, message.obj_id)
+            # conn.sendall(pickle.dumps(out_message))
+        # elif message.type == MessageType.FETCH_OBJ:
+        #     obj = ecv.session.query(class_for_name("models", message.class_type)).filter_by(id=message.obj_id).first()
+        #     if obj is not None:
+                
+        #     out_message = self.Message(MessageType.FETCH_OBJ, message.class_type, message.obj_id)
+        #     conn.sendall(pickle.dumps(out_message))
         else:
             pass
 
-    def check_id_handler(self, conn, class_type, id):
-        message = Message(MessageType.NONE, class_type, id)
-        offer = ecv.session.query(class_for_name("models", class_type)).filter_by(id=id).first()
-
-        if offer is None:
-            message.type = MessageType.CHECK_ID_FREE
+    def check_id_free(self, in_message):
+        out_message = Message(MessageType.NONE, in_message.class_type, in_message.obj_id)
+        obj = ecv.session.query(class_for_name("models", in_message.class_type)).filter_by(id=in_message.obj_id).first()
+        if obj is None:
+            out_message.type = MessageType.CHECK_ID_FREE
             print("Id actually free!")
         else:
-            message.type = MessageType.CHECK_ID_TAKEN
+            out_message.type = MessageType.CHECK_ID_TAKEN
             print("Id taken..")
+        return out_message
 
-        # message = dict(
-        #     type = "CHECK_ID_FREE",
-        #     class_type = class_type,
-        #     id = id
-        # )
-        conn.sendall(pickle.dumps(message.to_dict()))
+    def handle_created(self, in_message):
+        print("also creating object with id", str(in_message.obj_id))
+        ecv.session.add(in_message.obj)
+        ecv.session.commit()
 
 

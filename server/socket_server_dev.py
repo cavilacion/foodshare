@@ -21,10 +21,11 @@ message = dict(
     id = 1
 )
 
-while True:
-    # print("while loop")
-    response = pickle.loads(client.send_message(pickle.dumps(message)))
-    print(response)
-    time.sleep(1)
+if client.is_connected:
+    while True:
+        # print("while loop")
+        response = pickle.loads(client.send_message(pickle.dumps(message)))
+        print(response)
+        time.sleep(1)
 
 t.join()

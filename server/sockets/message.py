@@ -4,6 +4,8 @@ class MessageType(Enum):
     CHECK_ID = "CHECK_ID"
     CHECK_ID_TAKEN = "CHECK_ID_TAKEN"
     CHECK_ID_FREE = "CHECK_ID_FREE"
+    HAVE_CREATED = "HAVE_CREATED"
+    FETCH_OBJ = "FETCH_OBJ"
     NONE = "NONE"
 
 
@@ -12,10 +14,14 @@ class Message:
         self.type = type
         self.class_type = class_type
         self.obj_id = obj_id
+        self.obj = None
+
+    def set_obj(self, obj):
+        self.obj = obj
 
     def to_dict(self):
         return dict(
             type = self.type,
             class_type = self.class_type,
-            id = self.obj_id
+            obj_id = self.obj_id
         )
