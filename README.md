@@ -1,32 +1,55 @@
-# FoodShare Server Database
-## Requirements
-The server requires python version 2.7 with python-pip installed. To install the sql_alchemy library necessary for the server do
+
+# FoodShare Server
+
+## Dependencies
+The server requires python version 3.6. 
+
+To install the dependencies, create a virtualenv and run:
 ```
-$ pip install sqlalchemy
+$ pip install -r requirements.txt
 ```
-To install the pika library necessary for RabbitMQ for client and server do
+
+after this, you can go to the root directory and run:
 ```
-$ pip install pika
-``` 
-## Server
-Create a local database for the server by executing create_database
+$ python3 server.py
 ```
-$ python create_database.py
+This will start the program. It will start up different threads for the different components. 
+
+
+To populate the database with some initial data, run:
 ```
-Test the functionality by adding some users, an offer, two reservations, and two ratings
+$ python3 fixtures.py
 ```
-$ python test.py
+
+## Sockets
+
+When other server presets (Client objects) are specified in the server.py file, the server will try to connect to these servers.
+
+If the server is able to connect succesfully, the servers will synchronize their databases.
+
+snippet from server.py:
 ```
-Start consuming a queue that handles registration of users 
+client1 = SocketClient('127.0.0.1', presets[setting]['clients'][0])
+client2 = SocketClient('127.0.0.1', presets[setting]['clients'][1])
+
+clients = [client1] # Add clients here to test network sockets
 ```
-$ python run_server.py
+
+Identical servers using different ports (from the presets specified in server.py) can be run using a command line argument:
+
 ```
-## Client
-Now, when in the client directory, you can try to add a username to the database by executing the same command
+$ python3 server.py 0
+$ python3 server.py 1
 ```
-$ python register.py
+
+## Tests
+
+To run tests for the REST api, run:
+These will only test the REST api. But it does not properly test the message queue backend yet..
+
 ```
-Todo: write consumer functions for queues that contain offerings or reservation requests
+$ pytest
+```
 
 
 
