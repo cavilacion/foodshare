@@ -35,6 +35,7 @@ class OfferListResource(Resource):
         time_ready = data.get('time_ready')
         if time_ready is None:
             missing_required_field('time_ready')
+            
         p = Publisher()
         result = p.offer(host_id=host_id,portions=portions,price=price,info=info,time_ready=time_ready)
 

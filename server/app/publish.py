@@ -45,15 +45,18 @@ class Publisher:
 			self.connection.process_data_events()
 		return self.response==b'SUCCESS'
 
-	def register (self):
+	def register (self, username):
 		# prepare json message
-		self.json_msg = '{"action":"user","username":"'+self.username+'"}'
+		user = {u'action': u'adduser',
+				u'username': username}
+		self.json_msg = json.dumps(user)
+		
 		# post message to queue
-		return self.publish()
+		return (user if self.publish() else False)
 
 	def offer (self, host_id, portions, price, info, time_ready):
 		# prepare json message
-		offer = {u'action': u'offer',
+		offer = {u'action': u'addoffer',
 				 u'host_id': host_id,
 				 u'portions': portions,
 				 u'price': price,
@@ -63,7 +66,30 @@ class Publisher:
 
 		# post message to queue
 		return (offer if self.publish() else False)
-
+	
+	def reserve (self, user_id, offer_id, portions):
+		# prepare json message
+		reservation = {u'action': u'reserve',
+					   u'user_id': user_id,
+					   u'offer_id': offer_id,
+					   u'portions': portions}
+		self.json_msg=json.dumps(reservation)
+		
+		# post message to queue
+		return (reservation if self.publish() else False)
+	
+	def rate (self, user_id, host_id, stars, comment):
+		# prepare json message
+		rating = {u'action': u'addrating',
+				  u'user_id': user_id,
+				  u'host_id': host_id,
+				  u'stars': stars,
+				  u'comment': comment}
+		self.json_msg=json.dumps(rating)
+		
+		# post message to queue
+		return (rating if self.publish() else False)
+	
 	def __del__(self):
 		self.connection.close()
 		print ('Connection closed')

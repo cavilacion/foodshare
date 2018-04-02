@@ -30,10 +30,10 @@ def add_user(username):
 	try:
 		session.commit()
 		print (" > Added "+username+" to database")
-		return True
+		return "SUCCESS"
 	except IntegrityError: # unique constraint must not be violated
 		print (" > Username "+username+" already taken.")
-		return False
+		return "FALSE"
 
 def add_offer(offer):
 	host_id = offer["host_id"]
@@ -58,15 +58,61 @@ def add_offer(offer):
 		print (" > Failed to add offer made by "+user.username)
 		return "FAILURE"
 
+def add_reservation(reservation):
+	user_id = reservation["user_id"]
+	offer_id = reservation["offer_id"]
+	portions = reservation["portions"]
+	session = DBSession()
+	user=session.query(User).filter(User.id==user_id).first()
+	offer=session.query(Offer).filter(Offer.id==offer_id).first()
+	if not user:
+		return "User does not exist"
+	if not offer:
+		return "Offer does not exist"
+	r = Reservation(user=user, offer=offer, portions=portions)
+	session.add(r)
+	try:
+		session.commit()
+		print (" > "+user.username+" reserved "+str(portions)+" portions from "
+				+offer.host.username+"'s home made "+offer.info)
+		return "SUCCESS"
+	except IntegrityError:
+		print (" > Failed to reserve for user "+user.username)
+		return "FAILURE"
+
+def add_rating(rating):
+	user_id = rating["user_id"]
+	host_id = rating["host_id"]
+	stars = rating["stars"]
+	comment = rating["comment"]
+	session=DBSession()
+	user=session.query(User).filter(User.id==user_id).first()
+	host=session.query(User).filter(User.id==host_id).first()
+	if not user:
+		return "User does not exist"
+	if not host:
+		return "Host does not exist"
+	r = Rating(user=user, host=host, stars=stars, comment=comment)
+	session.add(r)
+	try:
+		session.commit()
+		print (" > "+user.username+" rated "+host.username+" with "+str(stars)+" stars: "+comment)
+		return "SUCCESS"
+	except IntegrityError:
+		print (" > Failed to add rating made by "+user.username)
+		return "FAILURE"
+
 def message_handle(ch, method, props, body):
-	print (body)
 	msg = json.loads(body)  # body is in json format
-	print (msg)
 	action = msg["action"]
-	if action == "user":
+	if action == "adduser":
 		result = add_user(msg["username"])
-	elif action == "offer":
+	elif action == "addoffer":
 		result = add_offer(msg)
+	elif action == "reserve":
+		result = add_reservation(msg)
+	elif action == "addrating":
+		result = add_rating(msg)
 	else:
 		result = "FAILURE"
 	ch.basic_publish(exchange='', routing_key=props.reply_to,
