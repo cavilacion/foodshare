@@ -58,9 +58,6 @@ class SocketServer:
         del self.clients[addr[0]]
 
     def handle_request(self, conn, addr, message):
-        # if not message['type']:
-        #     return
-        # message_obj = pickle.loads(message)
         print("Client sent message:", message.type, message.class_type, str(message.obj_id))
         
         if message.type == MessageType.CHECK_ID:
@@ -75,14 +72,6 @@ class SocketServer:
         elif message.type == MessageType.HAVE_UPDATED:
             out_message = self.fetch_obj(message)
             conn.sendall(pickle.dumps(out_message))
-            # out_message = Message(MessageType.FETCH_OBJ, message.class_type, message.obj_id)
-            # conn.sendall(pickle.dumps(out_message))
-        # elif message.type == MessageType.FETCH_OBJ:
-        #     obj = ecv.session.query(class_for_name("models", message.class_type)).filter_by(id=message.obj_id).first()
-        #     if obj is not None:
-                
-        #     out_message = self.Message(MessageType.FETCH_OBJ, message.class_type, message.obj_id)
-        #     conn.sendall(pickle.dumps(out_message))
         else:
             pass
 
@@ -105,7 +94,7 @@ class SocketServer:
             print("Id actually free!")
         else:
             out_message.type = MessageType.CHECK_ID_TAKEN
-            print("Id taken..")
+            print("Id taken.")
         return out_message
 
     def handle_created(self, in_message):

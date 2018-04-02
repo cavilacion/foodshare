@@ -50,7 +50,7 @@ class OfferListResource(Resource):
             return offer.to_dict(), 201
         else:
             p = Publisher()
-            result = p.offer(host_id=host_id,portions=portions,price=price,info=info,time_ready=time_ready)
+            result = p.addoffer(host_id=host_id,portions=portions,price=price,info=info,time_ready=time_ready)
             return result, 201
 
 class OfferResource(Resource):
@@ -60,25 +60,27 @@ class OfferResource(Resource):
             abort(404, message='Offer with id {} does not exist.'.format(offer_id))
         return offer.to_dict()
 
-    # TODO PUT request to update an offer
     def put(self, offer_id):
-        # data = check_request_json(request)
+        data = check_request_json(request)
+        portions = data.get('portions')
+        price = data.get('price')
+        info = data.get('info')
+        time_ready = data.get('time_ready')
 
-        offer = ecv.session.query(Offer).filter_by(id=offer_id).first()
-        if not offer:
-            abort(404, message='Offer with id {} does not exist.'.format(offer_id))
-
-            
-
-        return offer.to_dict()
+        p = Publisher()
+        result = p.updateoffer(offer_id=offer_id, portions=portions, price=price, info=info, time_ready=time_ready)
+        return result, 201
 
     def delete(self, offer_id):
-        offer = ecv.session.query(Offer).filter_by(id=offer_id).first()
-        if not offer:
-            abort(404, message='Offer with id {} does not exist.'.format(offer_id))
-
-        ecv.session.delete(offer)
-        ecv.session.commit()
-
-        return dict()
+        if ecv.testing:
+            offer = ecv.session.query(Offer).filter_by(id=offer_id).first()
+            if not offer:
+                abort(404, message='Offer with id {} does not exist.'.format(offer_id))
+            ecv.session.delete(offer)
+            ecv.session.commit()
+            result = dict()
+        else:
+            p = Publisher()
+            result = p.deleteoffer(offer_id=offer_id)
+        return result, 200
         

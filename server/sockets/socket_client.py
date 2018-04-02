@@ -38,7 +38,6 @@ class SocketClient:
     def wait_for_send(self):
         while self.is_connected:
             message = self.send_queue.get()
-            print("sending message")
             self.socket.sendall(message)
 
             data = self.socket.recv(2048)
@@ -49,7 +48,6 @@ class SocketClient:
     def send_message(self, message):
         response = None
         if self.is_connected:
-            print("putting message in queue")
             self.send_queue.put(message)
             try:
                 response = self.response_queue.get(block=True, timeout=1)

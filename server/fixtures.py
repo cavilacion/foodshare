@@ -5,7 +5,7 @@ from models import User, Offer, Reservation, Rating
 from app.database import create_engine_and_session
 
 
-create_engine_and_session(ecv, 'sqlite:///foodshare0.db')
+create_engine_and_session(ecv)
 
 
 def setup_db():
@@ -34,6 +34,7 @@ def app_fixtures():
     rat2 = Rating(user=u3, host=u1, stars=5, comment="had a good time =) his dad is a fun guy")
     ecv.session.add(rat1)
     ecv.session.add(rat2)
+    
     # commit changes
     ecv.session.commit()
 

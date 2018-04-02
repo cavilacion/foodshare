@@ -3,7 +3,6 @@ from sockets.message import Message, MessageType
 import pickle
 
 class Synchronizer:
-
     def __init__(self, sserver, clients):
         self.sserver = sserver
         self.clients = clients
@@ -56,15 +55,13 @@ class Synchronizer:
             if client is None:
                 print("{} with id {} is free!".format(class_type.__name__, picked_id))
                 new_object.id = picked_id
-                # u1 = User(username=usrname, id=picked_id)
                 self.db_session.add(new_object)
                 self.db_session.commit()
 
                 self.have_created(class_type.__name__, picked_id, new_object)
                 done = True
             else:
-                print("{} object with id {} is taken..".format(class_type.__name__, picked_id))  
-                # Add to message queue fetch_obj(self, class_type.__name__, picked_id, client)
+                print("{} object with id {} is taken.".format(class_type.__name__, picked_id))  
                 picked_id += 1
 
     def fetch_obj(self, class_type, id, client):
@@ -75,18 +72,5 @@ class Synchronizer:
             self.db_session.add(message_response.obj)
             self.db_session.commit()
 
-
-    # def handle_send_response(self, conn, addr, message):
-    #     if not message['type']:
-    #         return
-    #     print("Client sent message:", message['type'], message['class_type'], str(message['id']))
-    #     class_type = message['class_type']
-    #     id = message['id']
-        
-    #     if message['type'] == "CHECK_ID":
-    #         self.check_id_occupied(conn, class_type, id)
-    #     else:
-    #         pass
-    
 
     

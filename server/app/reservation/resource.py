@@ -57,12 +57,24 @@ class ReservationResource(Resource):
             abort(404, message='Reservation with id {} does not exist.'.format(reservation_id))
         return reservation.to_dict()
 
-    def delete(self, reservation_id):
-        reservation = ecv.session.query(Reservation).filter_by(id=reservation_id).first()
-        if not reservation:
-            abort(404, message='Offer with id {} does not exist.'.format(reservation_id))
+    def put(self, reservation_id):
+        data = check_request_json(request)
+        portions = data.get('portions')
+        p = Publisher()
+        result = p.updatereserve(reservation_id=reservation_id, portions=portions)
+        return result, 201
 
-        ecv.session.delete(reservation)
-        ecv.session.commit()
+
+    def delete(self, reservation_id):
+        if ecv.testing:
+            reservation = ecv.session.query(Reservation).filter_by(id=reservation_id).first()
+            if not reservation:
+                abort(404, message='Offer with id {} does not exist.'.format(reservation_id))
+
+            ecv.session.delete(reservation)
+            ecv.session.commit()
+        else:
+            p = Publisher()
+            result = p.deletereserve(reservation_id=reservation_id)
 
         return dict()

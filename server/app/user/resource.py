@@ -35,7 +35,7 @@ class UserListResource(Resource):
             return user.to_dict(), 201
         else:
             p = Publisher()
-            result = p.register(username=username)
+            result = p.adduser(username=username)
 
             return result, 201
 
@@ -48,12 +48,16 @@ class UserResource(Resource):
         return user.to_dict()
 
     def delete(self, user_id):
-        user = ecv.session.query(User).filter_by(id=user_id).first()
-        if not user:
-            abort(404, message='User with id {} does not exist.'.format(user_id))
+        if ecv.testing:
+            user = ecv.session.query(User).filter_by(id=user_id).first()
+            if not user:
+                abort(404, message='User with id {} does not exist.'.format(user_id))
 
-        ecv.session.delete(user)
-        ecv.session.commit()
-
-        return dict()
+            ecv.session.delete(user)
+            ecv.session.commit()
+            result = None
+        else:
+            p = Publisher()
+            result = p.deleteuser(user_id=user_id)
+        return result, 200
         

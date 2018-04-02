@@ -6,13 +6,14 @@ from models.base import Base
 from models.user import User
 from models.offer import Offer
 from models.reservation import Reservation
-
+import os
 import datetime
 
 @pytest.fixture()
 def db():
     Base.metadata.drop_all(bind=ecv.engine)
     Base.metadata.create_all(bind=ecv.engine)
+    os.environ["QUEUE_NAME"] = 'foodshare0'
     return ecv
 
 @pytest.fixture

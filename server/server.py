@@ -1,9 +1,9 @@
-
 from sockets.socket_server import SocketServer
 from sockets.socket_client import SocketClient
 from sockets.synchronizer import Synchronizer
 from message_queue.consumer import Consumer
 
+import os
 import pickle
 import threading
 from app import ecv
@@ -53,14 +53,17 @@ server = SocketServer(presets[setting]['server'])
 client1 = SocketClient('127.0.0.1', presets[setting]['clients'][0])
 client2 = SocketClient('127.0.0.1', presets[setting]['clients'][1])
 
-sync = Synchronizer(server, [])
+clients = [] # Add clients here to test network sockets
 
+sync = Synchronizer(server, clients)
 
-ecv.config.queue_name = presets[setting]['queue_name']
+# ecv.config.queue_name = presets[setting]['queue_name']
+os.environ["QUEUE_NAME"] = presets[setting]['queue_name']
+os.environ["DB_STRING"] = presets[setting]['db']
 
 sync.start()
 
-consumer = Consumer(sync, ecv.config.queue_name)
+consumer = Consumer(sync, presets[setting]['queue_name'])
 
 t = threading.Thread(target = consumer.start)
 t.daemon = True
