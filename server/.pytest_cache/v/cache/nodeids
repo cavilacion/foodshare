@@ -17,7 +17,6 @@
   "tests/test_reservation.py::TestReservationAPI::()::test_get_reservation_nonexistant",
   "tests/test_reservation.py::TestReservationAPI::()::test_delete_reservation",
   "tests/test_reservation.py::TestReservationAPI::()::test_delete_reservation_nonexistant",
-  "tests/test_sample.py::TestClass::()::test_one",
   "tests/test_user.py::TestUserAPI::()::test_get_all_users_empty",
   "tests/test_user.py::TestUserAPI::()::test_get_all_users",
   "tests/test_user.py::TestUserAPI::()::test_create_user_broken_json",

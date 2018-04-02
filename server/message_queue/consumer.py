@@ -25,14 +25,15 @@ from app import ecv
 
 class Consumer:
 
-	def __init__(self, synchronizer):
+	def __init__(self, synchronizer, queue_name):
 		self.sync = synchronizer
-		self.DBSession = ecv.session
+		self.DBSession = ecv.session()
 
 		# setup rabbitmq connection
 		self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 		self.channel = self.connection.channel()
-		self.channel.queue_declare(queue='foodshare')
+		self.queue_name = queue_name
+		self.channel.queue_declare(queue=self.queue_name)
 
 	def add_user(self, username):
 		# session=DBSession()
@@ -54,7 +55,7 @@ class Consumer:
 		time_ready = offer["time_ready"]
 		time_ready = datetime.strptime(time_ready, '%Y-%m-%d %H:%M:%S.%f')
 	
-		session=self.DBSession()
+		session=self.DBSession
 		user=session.query(User).filter(User.id==host_id).first()
 		if not user:
 			return "User does not exist"
@@ -73,7 +74,7 @@ class Consumer:
 		user_id = reservation["user_id"]
 		offer_id = reservation["offer_id"]
 		portions = reservation["portions"]
-		session = self.DBSession()
+		session = self.DBSession
 		user=session.query(User).filter(User.id==user_id).first()
 		offer=session.query(Offer).filter(Offer.id==offer_id).first()
 		if not user:
@@ -96,7 +97,7 @@ class Consumer:
 		host_id = rating["host_id"]
 		stars = rating["stars"]
 		comment = rating["comment"]
-		session=self.DBSession()
+		session=self.DBSession
 		user=session.query(User).filter(User.id==user_id).first()
 		host=session.query(User).filter(User.id==host_id).first()
 		if not user:
@@ -133,7 +134,7 @@ class Consumer:
 	def start(self):
 
 		self.channel.basic_qos(prefetch_count=1)
-		self.channel.basic_consume (self.message_handle, queue='foodshare', no_ack=True)
+		self.channel.basic_consume (self.message_handle, queue=self.queue_name, no_ack=True)
 
 		print (" > Message queue consumer waiting for messages...")
 		self.channel.start_consuming()

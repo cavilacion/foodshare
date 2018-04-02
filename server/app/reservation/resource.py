@@ -19,14 +19,10 @@ class ReservationListResource(Resource):
         offer_id = data.get('offer_id')
         if offer_id is None:
             missing_required_field('offer_id')
-        
-
 
         user_id = data.get('user_id')
         if user_id is None:
             missing_required_field('user_id')
-       
-
 
         portions = data.get('portions')
         if portions is None:

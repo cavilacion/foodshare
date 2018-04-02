@@ -13,7 +13,7 @@ class Publisher:
 		self.username=""
 
 		self.connection = pika.BlockingConnection(
-						   pika.ConnectionParameters(host='localhost'))
+						   pika.ConnectionParameters(host='127.0.0.1'))
 
 		self.channel = self.connection.channel()
 		result = self.channel.queue_declare(exclusive=True)
@@ -36,7 +36,7 @@ class Publisher:
 		self.corr_id = str(uuid.uuid4())
 
 		self.channel.basic_publish(exchange='',
-								   routing_key='foodshare',
+								   routing_key=ecv.config.queue_name,
 								   properties=pika.BasicProperties(
 										reply_to = self.callback_queue,
 										correlation_id = self.corr_id),

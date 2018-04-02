@@ -13,6 +13,7 @@ class SocketServer:
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.thread = None
+        self.db_session = ecv.session()
         try:
             self.socket.bind((self.host, self.port))
             self.socket.listen(5)
@@ -87,7 +88,7 @@ class SocketServer:
 
     def fetch_obj(self, in_message):
         out_message = Message(MessageType.NONE, in_message.class_type, in_message.obj_id)
-        obj = ecv.session.query(class_for_name("models", in_message.class_type)).filter_by(id=in_message.obj_id).first()
+        obj = self.db_session.query(class_for_name("models", in_message.class_type)).filter_by(id=in_message.obj_id).first()
         if obj is None:
             out_message.type = MessageType.NONE
             print("Object does not exist..")
@@ -98,7 +99,7 @@ class SocketServer:
 
     def check_id_free(self, in_message):
         out_message = Message(MessageType.NONE, in_message.class_type, in_message.obj_id)
-        obj = ecv.session.query(class_for_name("models", in_message.class_type)).filter_by(id=in_message.obj_id).first()
+        obj = self.db_session.query(class_for_name("models", in_message.class_type)).filter_by(id=in_message.obj_id).first()
         if obj is None:
             out_message.type = MessageType.CHECK_ID_FREE
             print("Id actually free!")
@@ -109,12 +110,12 @@ class SocketServer:
 
     def handle_created(self, in_message):
         print("also creating object with id", str(in_message.obj_id))
-        ecv.session.add(in_message.obj)
-        ecv.session.commit()
+        self.db_session.add(in_message.obj)
+        self.db_session.commit()
 
     def handle_updated(self, in_message):
         print("updating object with id", str(in_message.obj_id))
-        obj = ecv.session.query(class_for_name("models", in_message.class_type)).filter_by(id=in_message.obj_id).first()
+        obj = self.db_session.query(class_for_name("models", in_message.class_type)).filter_by(id=in_message.obj_id).first()
         if obj is not None:
-            ecv.session.update(in_message.obj)
-        ecv.session.commit() 
+            self.db_session.update(in_message.obj)
+        self.db_session.commit() 

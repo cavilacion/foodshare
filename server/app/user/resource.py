@@ -19,8 +19,8 @@ class UserListResource(Resource):
         username = data.get('username')
         if username is None:
             missing_required_field('username')
-
-        username_check = ecv.session.query(User).filter_by(username=username).first()
+        session = ecv.session()
+        username_check = session.query(User).filter_by(username=username).first()
         if username_check != None:
             abort(400, message='Username {} already exists.'.format(username))
 		
@@ -28,12 +28,15 @@ class UserListResource(Resource):
             user = User(
                 username=username, 
             )
-            ecv.session.add(user)
-            ecv.session.commit()  
+            
+            session.add(user)
+            session.commit()  
+
             return user.to_dict(), 201
         else:
             p = Publisher()
             result = p.register(username=username)
+
             return result, 201
 
 class UserResource(Resource):

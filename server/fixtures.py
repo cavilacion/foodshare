@@ -2,6 +2,11 @@ from models import Base
 from app import ecv
 import datetime
 from models import User, Offer, Reservation, Rating
+from app.database import create_engine_and_session
+
+
+create_engine_and_session(ecv, 'sqlite:///foodshare0.db')
+
 
 def setup_db():
     Base.metadata.drop_all(bind=ecv.engine)

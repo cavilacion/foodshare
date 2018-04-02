@@ -16,7 +16,6 @@ class OfferListResource(Resource):
     def post(self):
         data = check_request_json(request)
 
-        # Check and get host
         host_id = data.get('host_id')
         if host_id is None:
             missing_required_field('host_id')
@@ -47,6 +46,7 @@ class OfferListResource(Resource):
                 time_ready=datetime.datetime.fromtimestamp(time_ready))
             ecv.session.add(offer)
             ecv.session.commit()
+
             return offer.to_dict(), 201
         else:
             p = Publisher()

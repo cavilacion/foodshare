@@ -7,6 +7,7 @@ class Synchronizer:
     def __init__(self, sserver, clients):
         self.sserver = sserver
         self.clients = clients
+        self.db_session = ecv.session()
 
     def start(self):
         self.sserver.start()
@@ -43,7 +44,7 @@ class Synchronizer:
     def create_obj(self, new_object):
         class_type = type(new_object)
 
-        last_obj = ecv.session.query(class_type).order_by("id desc").first()
+        last_obj = self.db_session.query(class_type).order_by("id desc").first()
         if last_obj is None:
             picked_id = 1
         else:
@@ -56,9 +57,8 @@ class Synchronizer:
                 print("{} with id {} is free!".format(class_type.__name__, picked_id))
                 new_object.id = picked_id
                 # u1 = User(username=usrname, id=picked_id)
-                ecv.session.add(new_object)
-                ecv.session.commit()
-                ecv.session.flush()
+                self.db_session.add(new_object)
+                self.db_session.commit()
 
                 self.have_created(class_type.__name__, picked_id, new_object)
                 done = True
@@ -72,8 +72,8 @@ class Synchronizer:
         response = client.send_message(pickle.dumps(message))
         message_response = pickle.loads(response)
         if message_response.type == MessageType.OBJECT:
-            ecv.session.add(message_response.obj)
-            ecv.session.commit()
+            self.db_session.add(message_response.obj)
+            self.db_session.commit()
 
 
     # def handle_send_response(self, conn, addr, message):

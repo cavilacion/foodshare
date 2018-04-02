@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_restful import Api
+from app.database import create_engine_and_session
 
 from app import config
 
@@ -21,9 +22,4 @@ api.add_resource(ReservationResource, '/api/reservation/<reservation_id>')
 api.add_resource(UserListResource, '/api/user')
 api.add_resource(UserResource, '/api/user/<user_id>')
 
-
-# publisher = Publisher()
-
-# @ecv.route("/")
-# def hello():
-#     return "Hello World!"
+create_engine_and_session(ecv)
