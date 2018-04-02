@@ -52,7 +52,7 @@ server = SocketServer(presets[setting]['server'])
 client1 = SocketClient('127.0.0.1', presets[setting]['clients'][0])
 client2 = SocketClient('127.0.0.1', presets[setting]['clients'][1])
 
-sync = Synchronizer(server, [client1, client2])
+sync = Synchronizer(server, [])
 
 sync.start()
 
