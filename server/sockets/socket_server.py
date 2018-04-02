@@ -68,7 +68,12 @@ class SocketServer:
         elif message.type == MessageType.HAVE_CREATED:
             self.handle_created(message)
             conn.sendall(pickle.dumps(dict()))
-
+        elif message.type == MessageType.FETCH_OBJ:
+            out_message = self.fetch_obj(message)
+            conn.sendall(pickle.dumps(out_message))
+        elif message.type == MessageType.HAVE_UPDATED:
+            out_message = self.fetch_obj(message)
+            conn.sendall(pickle.dumps(out_message))
             # out_message = Message(MessageType.FETCH_OBJ, message.class_type, message.obj_id)
             # conn.sendall(pickle.dumps(out_message))
         # elif message.type == MessageType.FETCH_OBJ:
@@ -79,6 +84,17 @@ class SocketServer:
         #     conn.sendall(pickle.dumps(out_message))
         else:
             pass
+
+    def fetch_obj(self, in_message):
+        out_message = Message(MessageType.NONE, in_message.class_type, in_message.obj_id)
+        obj = ecv.session.query(class_for_name("models", in_message.class_type)).filter_by(id=in_message.obj_id).first()
+        if obj is None:
+            out_message.type = MessageType.NONE
+            print("Object does not exist..")
+        else:
+            out_message.type = MessageType.OBJECT
+            out_message.obj = obj
+        return out_message  
 
     def check_id_free(self, in_message):
         out_message = Message(MessageType.NONE, in_message.class_type, in_message.obj_id)
@@ -96,4 +112,9 @@ class SocketServer:
         ecv.session.add(in_message.obj)
         ecv.session.commit()
 
-
+    def handle_updated(self, in_message):
+        print("updating object with id", str(in_message.obj_id))
+        obj = ecv.session.query(class_for_name("models", in_message.class_type)).filter_by(id=in_message.obj_id).first()
+        if obj is not None:
+            ecv.session.update(in_message.obj)
+        ecv.session.commit() 

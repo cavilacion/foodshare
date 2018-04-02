@@ -19,17 +19,22 @@ class Synchronizer:
 
     def is_id_free(self, class_type, id):
         message = Message(MessageType.CHECK_ID, class_type, id)
-        free = True
+        occupied_by = None
         for client in self.clients:
             response = client.send_message(pickle.dumps(message))
             message_response = pickle.loads(response)
             if message_response.type == MessageType.CHECK_ID_TAKEN:
-                free = False
+                occupied_by = client
 
-        return free
+        return occupied_by
 
     def have_created(self, class_type, id, obj):
         message = Message(MessageType.HAVE_CREATED, class_type, id)
+        message.set_obj(obj)
+        self.broadcast(pickle.dumps(message))
+
+    def have_updated(self, class_type, id, obj):
+        message = Message(MessageType.HAVE_UPDATED, class_type, id)
         message.set_obj(obj)
         self.broadcast(pickle.dumps(message))
 
@@ -44,7 +49,8 @@ class Synchronizer:
 
         done = False
         while not done:
-            if self.is_id_free(class_type.__name__, picked_id):
+            client = self.is_id_free(class_type.__name__, picked_id)
+            if client is not None:
                 print("{} with id {} is free!".format(class_type.__name__, picked_id))
                 new_object.id = picked_id
                 # u1 = User(username=usrname, id=picked_id)
@@ -54,8 +60,16 @@ class Synchronizer:
                 done = True
             else:
                 print("{} object with id {} is taken..".format(class_type.__name__, picked_id))  
+                # Add to message queue fetch_obj(self, class_type.__name__, picked_id, client)
                 picked_id += 1
 
+    def fetch_obj(self, class_type, id, client):
+        message = Message(MessageType.FETCH_OBJ, class_type, id)
+        response = client.send_message(pickle.dumps(message))
+        message_response = pickle.loads(response)
+        if message_response.type == MessageType.OBJECT:
+            ecv.session.add(message_response.obj)
+            ecv.session.commit()
 
 
     # def handle_send_response(self, conn, addr, message):

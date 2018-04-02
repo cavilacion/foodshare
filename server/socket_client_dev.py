@@ -47,12 +47,15 @@ test_id = 4
 #         else:
 #             print("Offer with id {} is taken..".format(picked_id))  
 #             picked_id += 1
-cnt = 0
+cnt = 1
 while True:
+
     time.sleep(5)
-    name = "name" + str(random.randrange(1, 100000))
-    u1 = User(username=name)
-    sync.create_obj(u1)
+
+    sync.fetch_obj('User', cnt, client)
+    # name = "name" + str(random.randrange(1, 100000))
+    # u1 = User(username=name)
+    # sync.create_obj(u1)
     cnt+=1
 
 

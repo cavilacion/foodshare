@@ -6,26 +6,7 @@ import threading
 import time
 import pickle
 
-server = SocketServer(5555) 
 
-# t = threading.Thread(target = server.listen)
-# t.daemon = True
-# t.start()
-
-client = SocketClient('127.0.0.1', 5556)
-# client.connect()
-# print("client created..")
-
-message = dict(
-    type = "CHECK_ID",
-    class_type = "Offer",
-    id = 1
-)
-
-
-sync = Synchronizer(server, [])
-
-sync.start()
 
 while True:
     time.sleep(1)
