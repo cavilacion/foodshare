@@ -13,10 +13,14 @@ from models.reservation import Reservation
 from models.rating import Rating
 from models.base import Base
 
+from app import ecv
+
 # setup database connection
-engine = create_engine('sqlite:///foodshare.db')
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
+# engine = create_engine('sqlite:///foodshare.db')
+# Base.metadata.bind = engine
+# DBSession = sessionmaker(bind=engine)
+
+DBSession = ecv.session
 
 # setup rabbitmq connection
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
