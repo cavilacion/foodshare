@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from models.base import Base
 
 from models.offer import Offer
+
 # from models.classes import Reservation
 
 class User(Base):
