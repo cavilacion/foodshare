@@ -19,6 +19,7 @@ def db():
 def context(db):
     ctx = ecv.test_request_context()
     ctx.push()
+    ecv.testing = True
     yield ctx
     ctx.pop()
 

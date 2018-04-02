@@ -4,7 +4,7 @@ from app import ecv
 from models.user import User
 from models.rating import Rating
 from app.general_responses import *
-from app.publish import Publisher
+from message_queue.publish import Publisher
 
 class RatingListResource(Resource):
 

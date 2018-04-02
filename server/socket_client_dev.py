@@ -52,7 +52,7 @@ while True:
 
     time.sleep(5)
 
-    sync.fetch_obj('User', cnt, client)
+    # sync.fetch_obj('User', cnt, client)
     # name = "name" + str(random.randrange(1, 100000))
     # u1 = User(username=name)
     # sync.create_obj(u1)

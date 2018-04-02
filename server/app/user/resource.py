@@ -6,7 +6,7 @@ from models.reservation import Reservation
 from models.offer import Offer
 from models.user import User
 from app.general_responses import *
-from app.publish import Publisher
+from message_queue.publish import Publisher
 
 class UserListResource(Resource):
     def get(self):
@@ -24,10 +24,17 @@ class UserListResource(Resource):
         if username_check != None:
             abort(400, message='Username {} already exists.'.format(username))
 		
-        p = Publisher()
-        result = p.register(username=username)
-
-        return result, 201
+        if ecv.testing:
+            user = User(
+                username=username, 
+            )
+            ecv.session.add(user)
+            ecv.session.commit()  
+            return user.to_dict(), 201
+        else:
+            p = Publisher()
+            result = p.register(username=username)
+            return result, 201
 
 class UserResource(Resource):
     def get(self, user_id):

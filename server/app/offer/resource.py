@@ -5,7 +5,8 @@ import datetime
 from models.offer import Offer
 from models.user import User
 from app.general_responses import *
-from app.publish import Publisher
+from message_queue.publish import Publisher
+# from app import publisher
 
 class OfferListResource(Resource):
 
@@ -36,10 +37,21 @@ class OfferListResource(Resource):
         if time_ready is None:
             missing_required_field('time_ready')
             
-        p = Publisher()
-        result = p.offer(host_id=host_id,portions=portions,price=price,info=info,time_ready=time_ready)
-
-        return result, 201
+        if ecv.testing:
+            user = ecv.session.query(User).filter_by(id=host_id).first()
+            offer = Offer(
+                host=user, 
+                portions=portions, 
+                price=price, 
+                info=info, 
+                time_ready=datetime.datetime.fromtimestamp(time_ready))
+            ecv.session.add(offer)
+            ecv.session.commit()
+            return offer.to_dict(), 201
+        else:
+            p = Publisher()
+            result = p.offer(host_id=host_id,portions=portions,price=price,info=info,time_ready=time_ready)
+            return result, 201
 
 class OfferResource(Resource):
     def get(self, offer_id):
@@ -55,6 +67,8 @@ class OfferResource(Resource):
         offer = ecv.session.query(Offer).filter_by(id=offer_id).first()
         if not offer:
             abort(404, message='Offer with id {} does not exist.'.format(offer_id))
+
+            
 
         return offer.to_dict()
 

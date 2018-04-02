@@ -47,8 +47,8 @@ __all__ = ['create_engine_and_session']
 # 		properties=pika.BasicProperties(correlation_id = props.correlation_id),
 # 		body=response)
 
-def create_engine_and_session(app):
-    app.engine = create_engine('sqlite:///foodshare.db') 
+def create_engine_and_session(app, db_string):
+    app.engine = create_engine(db_string) 
     Base.metadata.create_all(app.engine)
 
     app.session = scoped_session(sessionmaker(  autocommit=False,

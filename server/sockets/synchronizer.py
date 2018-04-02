@@ -22,6 +22,8 @@ class Synchronizer:
         occupied_by = None
         for client in self.clients:
             response = client.send_message(pickle.dumps(message))
+            if response is None:
+                continue
             message_response = pickle.loads(response)
             if message_response.type == MessageType.CHECK_ID_TAKEN:
                 occupied_by = client
@@ -50,12 +52,14 @@ class Synchronizer:
         done = False
         while not done:
             client = self.is_id_free(class_type.__name__, picked_id)
-            if client is not None:
+            if client is None:
                 print("{} with id {} is free!".format(class_type.__name__, picked_id))
                 new_object.id = picked_id
                 # u1 = User(username=usrname, id=picked_id)
                 ecv.session.add(new_object)
                 ecv.session.commit()
+                ecv.session.flush()
+
                 self.have_created(class_type.__name__, picked_id, new_object)
                 done = True
             else:
