@@ -22,4 +22,3 @@ api.add_resource(ReservationResource, '/api/reservation/<reservation_id>')
 api.add_resource(UserListResource, '/api/user')
 api.add_resource(UserResource, '/api/user/<user_id>')
 
-create_engine_and_session(ecv)

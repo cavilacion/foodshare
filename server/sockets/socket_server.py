@@ -5,6 +5,8 @@ import pickle
 from sockets.message import Message, MessageType
 from app import ecv
 from sockets.utils import class_for_name
+from models import User, Offer
+from datetime import datetime
 
 class SocketServer:
     def __init__(self, port):
@@ -99,7 +101,14 @@ class SocketServer:
 
     def handle_created(self, in_message):
         print("also creating object with id", str(in_message.obj_id))
-        self.db_session.add(in_message.obj)
+        print(in_message.obj)
+        new_object = class_for_name("models", in_message.class_type)(**in_message.obj)
+        # print(in_message.obj)
+        if in_message.class_type == 'Offer':
+            new_object.time_ready = datetime.strptime(new_object.time_ready, '%Y-%m-%d %H:%M:%S.%f')
+            new_object.time_created = datetime.strptime(new_object.time_created, '%Y-%m-%d %H:%M:%S.%f')
+            # print("is offer")
+        self.db_session.add(new_object)
         self.db_session.commit()
 
     def handle_updated(self, in_message):

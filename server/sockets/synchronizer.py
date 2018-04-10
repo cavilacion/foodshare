@@ -1,6 +1,7 @@
 from app import ecv
 from sockets.message import Message, MessageType
 import pickle
+from sqlalchemy import desc
 
 class Synchronizer:
     def __init__(self, sserver, clients):
@@ -32,7 +33,7 @@ class Synchronizer:
 
     def have_created(self, class_type, id, obj):
         message = Message(MessageType.HAVE_CREATED, class_type, id)
-        message.set_obj(obj)
+        message.set_obj(obj.to_dict())
         self.broadcast(pickle.dumps(message))
 
     def have_updated(self, class_type, id, obj):
@@ -43,7 +44,7 @@ class Synchronizer:
     def create_obj(self, new_object):
         class_type = type(new_object)
 
-        last_obj = self.db_session.query(class_type).order_by("id desc").first()
+        last_obj = self.db_session.query(class_type).order_by(desc(class_type.id)).first()
         if last_obj is None:
             picked_id = 1
         else:

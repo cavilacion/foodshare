@@ -2,6 +2,7 @@ from sockets.socket_server import SocketServer
 from sockets.socket_client import SocketClient
 from sockets.synchronizer import Synchronizer
 from message_queue.consumer import Consumer
+from app.database import create_engine_and_session
 
 import os
 import pickle
@@ -47,13 +48,18 @@ if len(sys.argv) > 1:
 else:
     setting = 0
 
+create_engine_and_session(ecv, presets[setting]['db'])
+
 
 # Start listening on socket
 server = SocketServer(presets[setting]['server']) 
 client1 = SocketClient('127.0.0.1', presets[setting]['clients'][0])
 client2 = SocketClient('127.0.0.1', presets[setting]['clients'][1])
 
-clients = [] # Add clients here to test network sockets
+# if setting == 0:
+#     clients = [client2] # Add clients here to test network sockets
+# elif setting == 1:
+clients = [client1, client2]
 
 sync = Synchronizer(server, clients)
 
@@ -68,6 +74,7 @@ consumer = Consumer(sync, presets[setting]['queue_name'])
 t = threading.Thread(target = consumer.start)
 t.daemon = True
 t.start()
+
 
 
 ecv.run(debug=False, port=presets[setting]['flask'])

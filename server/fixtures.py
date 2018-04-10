@@ -3,9 +3,47 @@ from app import ecv
 import datetime
 from models import User, Offer, Reservation, Rating
 from app.database import create_engine_and_session
+import sys
 
+presets = [
+    {
+        'server': 5555,
+        'clients': [
+            5556,
+            5557
+        ],
+        'flask': 5000,
+        'db': 'sqlite:///foodshare0.db',
+        'queue_name': 'foodshare0'
+    },
+    {
+        'server': 5556,
+        'clients': [
+            5555,
+            5557
+        ],
+        'flask': 5001,
+        'db': 'sqlite:///foodshare1.db',
+        'queue_name': 'foodshare1'
+    },
+    {
+        'server': 5557,
+        'clients': [
+            5556,
+            5555
+        ],
+        'flask': 5002,
+        'db': 'sqlite:///foodshare2.db',
+        'queue_name': 'foodshare2'
+    }
+]
 
-create_engine_and_session(ecv)
+if len(sys.argv) > 1:
+    setting = int(sys.argv[1])
+else:
+    setting = 0
+
+create_engine_and_session(ecv, presets[setting]['db'])
 
 
 def setup_db():
